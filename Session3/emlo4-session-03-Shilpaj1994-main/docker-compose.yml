@@ -1,0 +1,31 @@
+volumes:
+  mnist:
+
+services:
+  train:
+    build:
+      context: model_train
+      dockerfile: Dockerfile.train
+    volumes:
+      - mnist:/opt/mount/
+    restart: on-failure
+
+  evaluate:
+    build:
+      context: model_eval
+      dockerfile: Dockerfile.eval
+    volumes:
+      - mnist:/opt/mount/
+    restart: on-failure
+    depends_on:
+      - train
+
+  infer:
+    build:
+      context: model_infer
+      dockerfile: Dockerfile.infer
+    volumes:
+      - mnist:/opt/mount/
+    restart: on-failure
+    depends_on:
+      - evaluate

@@ -1,0 +1,22 @@
+# Image to be used
+FROM python:3.9-slim
+
+# Install Python
+RUN apt-get update && apt-get install -y python3 python3-pip
+
+# Install dependencies (torch and torchvision for CPU only)
+RUN pip3 install --no-cache-dir torch==1.12.1 torchvision==0.13.1 -f https://download.pytorch.org/whl/cpu/torch_stable.html "numpy<2"
+RUN pip3 install --no-cache-dir fastapi[standard]==0.114.1 python-multipart==0.0.9 pillow==10.4.0
+
+# Workspace Directory
+WORKDIR /workspace/
+
+# Copy trian.py to the Working directory
+COPY response.py /workspace/
+COPY model.py /workspace/
+
+# Run the training script
+EXPOSE 8000
+
+CMD ["uvicorn", "response:app", "--host", "0.0.0.0", "--port", "8000"]
+# CMD ["sh", "-c", "python3 eval.py && mv eval_results.json /opt/mount/model/"]

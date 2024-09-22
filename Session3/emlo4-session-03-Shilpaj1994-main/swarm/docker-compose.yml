@@ -1,0 +1,32 @@
+# services:
+#   server:
+#     image: mnist-fastapi-compose-server
+#     volumes:
+#       - ../model:/app/model
+#     ports:
+#       - "8000:80"
+#     networks:
+#       - app
+#     deploy:
+#       replicas: 4
+#       restart_policy:
+#         condition: on-failure
+
+volumes:
+  mnist:
+
+services:
+  train:
+    image: python:3.9-slim
+    volumes:
+      - mnist:/opt/mount/
+    networks:
+      - app
+    deploy:
+      replicas: 4
+      restart_policy:
+        condition: on-failure
+
+networks:
+  app:
+    driver: overlay

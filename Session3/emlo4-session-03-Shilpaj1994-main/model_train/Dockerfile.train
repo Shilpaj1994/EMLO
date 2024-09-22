@@ -1,0 +1,21 @@
+# Image to be used
+FROM python:3.9-slim
+
+# Install Python
+RUN apt-get update && apt-get install -y python3 python3-pip
+
+# Install dependencies (torch and torchvision for CPU only)
+RUN pip3 install --no-cache-dir torch==1.12.1 torchvision==0.13.1 -f https://download.pytorch.org/whl/cpu/torch_stable.html "numpy<2"
+
+# Workspace Directory
+WORKDIR /workspace/
+
+# Copy trian.py to the Working directory
+COPY train.py /workspace/
+COPY model.py /workspace/
+
+# Run the training script and move the model directory after it is created
+RUN mkdir -p /opt/mount/model
+RUN mkdir -p /opt/mount/data
+# CMD ["sh", "-c", "python3 train.py --dry-run && mv model/* /opt/mount/model/ && mv data/* /opt/mount/data/ && mv model.py /opt/mount/"]
+CMD ["sh", "-c", "python3 train.py && mv model/* /opt/mount/model/ && mv data/* /opt/mount/data/ && mv model.py /opt/mount/"]
